@@ -13,6 +13,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import org.w3c.dom.Text;
+
 
 public class Animator implements ApplicationListener {
 
@@ -33,6 +35,11 @@ public class Animator implements ApplicationListener {
 
 	OrthographicCamera camera;
 
+	Texture background;
+	TextureRegion bgRegion;
+
+	int posx, posy;
+
 	@Override
 	public void create() {
 
@@ -47,7 +54,11 @@ public class Animator implements ApplicationListener {
 		left = new Rectangle(0, 0, width/3, height);
 		right = new Rectangle(width*2/3, 0, width/3, height);
 
-
+		background = new Texture(Gdx.files.internal("topdown_background.jpg"));
+		background.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+		bgRegion = new TextureRegion(background);
+		posx = 0;
+		posy = 0;
 
 		// Load the sprite sheet as a Texture
 		walkSheet = new Texture(Gdx.files.internal("Miner_spritesheet.png"));
@@ -89,19 +100,24 @@ public class Animator implements ApplicationListener {
 		if (touch != 0) {
 			direction = touch;
 		}
+		posx += direction * 5;
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+		bgRegion.setRegion(posx,posy, width, height);
 
 		// Get current frame of animation for the current stateTime
 		TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
 		spriteBatch.begin();
+		// primer pintem el background
+		spriteBatch.draw(bgRegion,0,0);
 		int spriteWidth = walkSheet.getWidth() / FRAME_COLS;
 		int spriteHeight = walkSheet.getHeight() / FRAME_ROWS;
 		int x = (width - spriteWidth) / 2;
 		int y = (height - spriteHeight) / 2;
 		spriteBatch.draw(currentFrame, x+40, y, spriteWidth/2-40, spriteHeight/2, spriteWidth, spriteHeight, direction, 1, 0); // Draw current frame at (50, 50)
-
 		spriteBatch.end();
+
+
 	}
 
 	@Override
