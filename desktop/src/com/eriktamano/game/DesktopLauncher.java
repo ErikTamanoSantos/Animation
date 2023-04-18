@@ -9,6 +9,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
+		config.setWindowedMode(1600, 800);
 		config.setTitle("Animation");
 		new Lwjgl3Application(new Animator(), config);
 	}
